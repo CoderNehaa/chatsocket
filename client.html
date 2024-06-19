@@ -14,9 +14,15 @@
         <input type="text" id="message-input" />
         <button id="send-message">Send</button>
     </div>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>
         const socket = io.connect("http://localhost:3000")
+
+        const userName = prompt("Enter username");
+        socket.userName = userName;
+        socket.emit("join", userName);
 
         const messageInput = document.getElementById("message-input");
         const sendBtn = document.getElementById("send-message");
@@ -30,12 +36,21 @@
 
                 //add message to list
                 const messageElement = document.createElement("div");
-                messageElement.innerText = message;
+                messageElement.innerText = userName + " : " + message;
                 msgList.appendChild(messageElement);
             
                 messageInput.value = ""
             }
         })
+
+        // Listen for broadcast meesage and addd to list
+        socket.on("broadcast_message" , (userMessage) => {
+            const messageElement = document.createElement("div");
+            messageElement.innerText = userMessage.userName + " : " + userMessage.message;
+            msgList.appendChild(messageElement);
+        })
     </script>
 </body>
 </html>
+
+ 
